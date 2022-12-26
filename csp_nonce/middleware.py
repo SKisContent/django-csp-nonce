@@ -64,9 +64,10 @@ class CSPNonceMiddleware(MiddlewareMixin):
             for p in csp_split:
                 for x in ('script', 'style'):
                     if p.lstrip().startswith(x) and nonce_request[x]:
-                        p += " 'nonce-{}'".format(nonce_request[x])
-                        if x == 'script' and csp_flag_strict:
-                            p += " 'strict-dynamic'"
+                        if "'unsafe-inline'" not in p:
+                            p += " 'nonce-{}'".format(nonce_request[x])
+                            if x == 'script' and csp_flag_strict:
+                                p += " 'strict-dynamic'"
                 new_csp.append(p)
 
             response[header['name']] = ";".join(new_csp)
